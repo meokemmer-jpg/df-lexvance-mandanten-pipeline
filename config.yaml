@@ -1,0 +1,158 @@
+# DF-LEXVANCE-MANDANTEN-PIPELINE Configuration [CRUX-MK]
+# Welle-48 Track-A Wave-1 DC-1 Foundation-DF (Gap-Cluster D)
+# Mandanten-Akquisition + Akten + Fristen + RVG-Abrechnung
+
+df_id: DF-LEXVANCE-MANDANTEN-PIPELINE
+df_name: lexvance-mandanten-pipeline
+version: 0.1.0-SKELETON
+status: SKELETON-CONDITIONAL
+crux-mk: true
+
+description: |
+  Mandanten-Pipeline fuer Akquisition (Lead + Konflikt-Check + Onboarding) +
+  Akten-Verwaltung (DMS + Versionierung + Aufbewahrungs-Fristen) + Fristen-
+  Tracker (Klage/Einspruch/Revision/Verjaehrung) + RVG-Abrechnung
+  (Zeitabrechnung + Pauschalen + Privileged-Communication-Schutz).
+
+# === Default-Action ===
+
+default_action:
+  description: "Mandanten-Status-Sweep: Konflikt-Check + Fristen-Alarm + RVG-Stundenabrechnung"
+  rho_per_run_eur: 250
+  block_gates:
+    - gate_id: K13_PAV
+      block_reason: "Mandanten-Daten = Q_0-naehe (Privileged-Communication), PHRONESIS_TICKET Pflicht"
+      false_block_cost_eur: 600
+      legitimate_block_condition: "Production-Mode aktiv UND PHRONESIS_TICKET fehlt"
+    - gate_id: K11
+      block_reason: "Cross-Mandanten-Read verboten ohne Tenant-Isolation (Konflikt-Risiko!)"
+      false_block_cost_eur: 1500
+      legitimate_block_condition: "Tenant-Context fehlt"
+  graceful_degradation_path: "Mock-Mandanten-Status mit Frist-Stub + Manual-RVG-Flag"
+
+# === Tier-2 Pflicht-Check ===
+
+tier_2_check:
+  lambda_per_month_estimate: 40  # mehrere/Tag (alle aktiven Mandate)
+  narrow_scope: "Mandanten-Lifecycle (Akquisition → Akten → Fristen → Abrechnung) mit 4 Sub-Bereichen"
+  determinism: 0.85
+  rollback_seconds: 30
+  test_coverage_target: 0.85
+  k0_protected: true  # Mandanten-Daten K_0/Q_0
+  q0_measurable: true
+  escalation_after_n_fails: 3
+  rho_budget_eur_day: 8
+  audit_trail: branch-hub/audit/df-lexvance-mandanten-pipeline.jsonl
+
+# === K11-K16 ===
+
+k11_cascade_containment:
+  cascade_isolation: hard
+  failure_blast_radius: 1
+  dependency_dlq_strategy: "skip-mandant-resume-naechster + jsonl-log (KEIN Cross-Read)"
+
+k12_distillation_resistenz:
+  output_feeds_into_training: false  # Mandanten-Daten NIE in Training
+  provenance_required_in_output: true
+  non_llm_validation_layer: "Frist-Bandbreite-Check + RVG-Satz-Plausibilitaet (max 350 EUR/h) + Konflikt-Check"
+
+k13_independent_ground_truth:
+  external_anchor_type: "rvg_corpus + akten_dms + github_api"
+  external_anchor_validation_frequency: "wochentlich"
+  pre_action_domain_check:
+    env_tag: "dev|staging|prod via DF_LEXVANCE_MANDANTEN_ENV"
+    mount_point: "branch-hub/lexvance/mandanten/ + RVG-Corpus"
+    network_region: "n/a"
+  pre_action_backup_check:
+    backup_status: "Mandanten-Daten read-only (DMS-Backup separat); Write nur fuer Status-Updates"
+    replication_lag: "DMS-Sync max 1h"
+  pre_action_blast_radius_check:
+    blast_radius: "max 1 Mandant pro Run (Cross-Read verboten per K11)"
+    reversibility_class: "side-effect (Status-Update + RVG-Stunden-Eintrag); reversibel via Versions-Suffix"
+
+k14_human_override_decay:
+  override_complexity: requires_specialist  # K_0/Q_0: Mandanten-Daten + Privileged-Communication
+  override_documentation_freshness_days: 7
+  martin_review_cadence: pro Konflikt-Alarm + pro RVG-Update + pro Frist-Kritikalitaet
+  bus_factor_handover_drilled: false
+
+k15_entropy_budget:
+  entropy_added_loc_estimate: 300
+  entropy_added_concepts:
+    - MandantenLifecycle
+    - KonfliktChecker
+    - AktenVerwalter
+    - FristenManager
+    - RvgAbrechnung
+  entropy_justified_by_rho: "4.0x (Verjaehrungs-Vermeidung + RVG-Stunden-Genauigkeit + Konflikt-Vermeidung)"
+  entropy_subtractive_potential: "ersetzt manuelles Mandanten-CRM + Fristen-Tracker"
+
+k16_concurrent_spawn_mutex:
+  concurrent_spawn_protection: both
+  lock_dir: /tmp/df-lexvance-mandanten-pipeline.lock
+  lock_stale_age_h: 6
+  engine_pgrep_check: true
+  lock_release_on: EXIT_INT_TERM
+
+# === LC1-LC5 ===
+
+lose_coupling:
+  LC1_graceful_degradation:
+    degradation_modes:
+      - full              # alle 4 Bereiche (Akquisition + Akten + Fristen + RVG)
+      - degraded_rvg      # RVG-Corpus nicht erreichbar
+      - degraded_dms      # Akten-DMS nicht erreichbar
+      - standalone        # Mock-Lifecycle mit Manual-Flags
+    degradation_test_required: true
+
+  LC2_direct_mode:
+    direct_mode_available: true
+    direct_mode_capability: 0.75
+    direct_mode_trigger: "DMS-Sync-Drift oder RVG-Corpus-Drift"
+
+  LC3_circuit_breaker:
+    circuit_breaker_timeout_s: 30
+    circuit_breaker_open_threshold: 3
+    circuit_breaker_half_open_test_interval_s: 300
+
+  LC4_failure_isolation:
+    state_externalization: true
+    idempotent_operations: true
+    dependency_dlq_separate: true  # eigene DLQ pro Mandant (Konflikt-Schutz)
+
+  LC5_health_check:
+    health_check_dependencies: []
+    health_check_degraded_score: 0.6
+    health_check_endpoint_or_file: /tmp/df-lexvance-mandanten-pipeline-health.json
+
+# === ENV-Var-Gated Real-Integration ===
+
+env_var_gating:
+  DF_LEXVANCE_MANDANTEN_REAL_ENABLED: false
+  PHRONESIS_TICKET_REQUIRED: true  # Mandanten-Daten K_0/Q_0
+  default_mode: mock
+
+# === Operatives ===
+
+operations:
+  output_path: ~/Projects/dark-factories/df-lexvance-mandanten-pipeline/
+  state_file: ~/.df-lexvance-mandanten-pipeline/state.json
+  jsonl_audit_path: branch-hub/audit/df-lexvance-mandanten-pipeline.jsonl
+  stop_flag_path: /tmp/df-lexvance-mandanten-pipeline.stop
+  health_file_path: /tmp/df-lexvance-mandanten-pipeline-health.json
+  schedule: "Daily 07:00 Fristen-Sweep + Continuous on-demand"
+
+# === rho-Schaetzung ===
+
+rho_estimate:
+  annual_eur: 150000
+  reason: "Verjaehrungs-Vermeidung (Schaden bis 100k/Vorfall) + RVG-Stundenabrechnung-Praezision + Konflikt-Vermeidung"
+  schwer_quantifizierbar: false  # Verjaehrungs-Schaden quantifizierbar
+
+# === CRUX-Bindung ===
+
+crux_bindung:
+  K_0: "DIREKT GESCHUETZT (Verjaehrungs-Schaden-Vermeidung + Konflikt-Vermeidung)"
+  Q_0: "epistemische Integritaet via DMS-Versionierung + Privileged-Communication-Schutz"
+  I_min: "strukturierte 4-Bereiche-Pipeline (300 LOC + Tests)"
+  W_0: "LexVance-Anwalts-Bandbreite reduziert via Auto-Lifecycle-Management"
