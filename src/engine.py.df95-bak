@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 # K12+K13+K16 Trinity-CONTRARIAN 2026-05-17 (Cross-LLM-validated)
 def k12_provenance(payload: bytes, key: bytes = b"df-trinity-contrarian-v1") -> dict:
@@ -37,6 +36,7 @@ Pre/Post-Conditions:
 - Pre: mandant_id (str), lifecycle_phase (str in PHASES)
 - Post: MandantenResult mit phase, naechste_frist, rvg_stunden_offen, konflikt_status
 """
+from __future__ import annotations
 
 import os
 from dataclasses import dataclass, field
