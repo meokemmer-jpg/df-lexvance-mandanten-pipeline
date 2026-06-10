@@ -1,9 +1,9 @@
 {
   "df": "df-lexvance-mandanten-pipeline",
-  "ts": "2026-06-09T01:44:32.548304+00:00",
+  "ts": "2026-06-09T15:18:03.247513+00:00",
   "ok": true,
-  "bytes": 5842,
+  "bytes": 4961,
   "model": "kemmer-14b-ctx8k",
   "mode": "produce",
-  "duration_s": 46.7
+  "duration_s": 40.9
 }

@@ -1,89 +1,68 @@
 # df-lexvance-mandanten-pipeline — PRODUKTION [CRUX-MK]
-*2026-06-09T01:44:32.546495+00:00 | ollama-local/kemmer-14b-ctx8k*
+*2026-06-09T15:18:03.245741+00:00 | ollama-local/kemmer-14b-ctx8k*
 
 # Dokumentation der Dark-Factory 'df-lexvance-mandanten-pipeline'
 
-## Einleitung
+## Übersicht
 
-Die Dark-Factory `df-lexvance-mandanten-pipeline` ist ein integriertes System zur Unterstützung des Mandatentreibens in der LexVance Anwaltskanzlei. Es umfasst den gesamten Lebenszyklus eines Mandanten von der Akquisition über Onboarding und Aktivphase bis hin zur Abrechnung und Schließungsphase, wobei es eine einheitliche Lösung für die Verwaltung von Mandantenakten, -konflikten und -fristen bietet.
+Die Dark-Factory 'df-lexvance-mandanten-pipeline' ist eine strukturierte Systemarchitektur, die den gesamten Lebenszyklus von Mandatengeschäften innerhalb der LexVance Anwaltskanzlei abdeckt. Sie umfasst fünf Phasen: Akquisition, Onboarding, Aktivphase, Abrechnung und Abschlussphase. Diese Factory wurde entwickelt, um den Mandanten-Lifecycle zu optimieren und gleichzeitig Compliance-Standards einzuhalten.
 
-## Systemarchitektur
-
-Die Factory ist in fünf Phasen aufgeteilt, um einen vollständigen Überblick über den Mandanten-Lifecycle zu gewährleisten. Diese Phasen sind:
-
-1. **AKQUISITION** (Lead-Tracking + Konflikt-Check)
-2. **ONBOARDING** (Mandat-Vertrag + DSGVO-Einwilligung)
-3. **AKTIV** (Aktenverwaltung + Fristentracking + RVG-Zeitabrechnung)
-4. **ABRECHNUNG** (RVG-Endabrechnung)
-5. **ABGESCHLOSSEN** (Aufbewahrungsfrist)
+## Mandanten-Lifecycle Phasen
 
 ### 1. Phase - AKQUISITION
-In dieser Phase wird die Akquise von Leads durchgeführt und ein ausgiebiger Konflikt-Check durchgeführt, um sicherzustellen, dass der potenzielle Mandant nicht mit bestehenden Fällen in Einklang steht. Der Prozess beinhaltet:
-
-- **Lead-Tracking**: Die Akquisition beginnt mit dem Tracking von Leads aus verschiedenen Quellen wie Anfragen und Kontaktaufnahmen.
-- **Konflikt-Check**: Ein detaillierter Konfliktschutz wird durchgeführt, um sicherzustellen, dass kein Interessenkonflikt vorliegt. Dies beinhaltet die Überprüfung auf existierende Mandanten und offene Fälle.
+Die Akquise-Phase beginnt mit der Identifikation potentieller Mandanten (Leads). Der Prozess beinhaltet eine detaillierte Analyse und Bewertung dieser Leads, um zu bestimmen, ob sie für die Kanzlei interessant sind. Ein wesentlicher Bestandteil ist der Konflikt-Check, der sicherstellt, dass kein Interessenkonflikt zwischen dem potenziellen Mandanten und bestehenden Mandanten existiert.
 
 ### 2. Phase - ONBOARDING
-Die Onboarding-Phase sorgt dafür, dass alle rechtlichen Voraussetzungen erfüllt sind:
-
-- **Mandat-Vertrag**: Ein Vertrag wird zwischen dem Mandanten und der Kanzlei abgeschlossen.
-- **DSGVO-Einwilligung**: Der Mandant gibt seine Zustimmung zur Datenverarbeitung gemäß der Datenschutzrichtlinien.
+Nach erfolgreicher Akquise beginnt die Onboarding-Phase. Hier wird der Mandatvertrag ausgehandelt und abgeschlossen. Zusätzlich muss eine DSGVO-Einwilligung von den Mandanten erlangt werden, um alle rechtlichen Voraussetzungen für die Bearbeitung des Falles zu erfüllen.
 
 ### 3. Phase - AKTIV
-In dieser Phase wird die Aktenverwaltung durchgeführt, Fristen geprüft und RVG-Zeitabrechnungen erfolgen:
-
-- **Aktenverwaltung**: Alle relevanten Dokumente werden gesammelt und verwalten.
-- **Fristentracking**: Die Factory kümmert sich um den Überblick über wichtige rechtliche Termine wie Klagefristen, Einspruchsfristen usw.
-- **RVG-Zeitabrechnung**: Für jede Rechtssache werden die RVG-Stunden abgerechnet.
+In dieser Phase wird die tatsächliche Arbeit am Fall durchgeführt. Dies beinhaltet die Verwaltung von Akten und Dokumenten im DMS (Document Management System), den regelmäßigen Überprüfung der Rechtlichkeiten wie Klagefristen, Einspruchsmöglichkeiten oder Revisionstermine sowie die RVG-Zeitabrechnung für geleistete Arbeit.
 
 ### 4. Phase - ABRECHNUNG
-Diese Phase beinhaltet den Abschluss der Rechtsangelegenheiten:
-
-- **RVG-Endabrechnung**: Die Endabrechnung für den Mandanten wird durchgeführt, um alle bisherigen Rechnungen zu kalkulieren.
+Die Abrechnungsphase ist das Ende des Mandanten-Lifecycles und beginnt mit der Durchführung einer RVG-Endabrechnung, welche eine detaillierte Auflistung aller geleisteten Leistungen für den Mandanten enthält.
 
 ### 5. Phase - ABGESCHLOSSEN
-Nach dem Abschluss der Rechtssache beginnt die Aufbewahrungsfrist gemäß § 50 BORA (Berufshaftpflichtversicherungsgesetz).
+Nachdem alle formalen Abnahmeverfahren abgeschlossen sind, beginnt die Aufbewahrungsfrist gemäß § 50 BORA (Berufshaftpflichtversicherungsgesetz). Diese Phase ist für die Dokumentation und Datenspeicherung kritisch.
 
-## Ausgabe
+## Ausgabe des Systems
 
-Das System produziert ein `MandantenResult`-Objekt, das Informationen zu den einzelnen Phasen enthält, einschließlich:
+Das System erzeugt ein MandantenResult-Objekt, das umfassende Informationen über den gesamten Lebenszyklus eines Mandanten enthält. Dieses Objekt umfasst:
+- Die aktuelle Phase im Lebenszyklus.
+- Der Status von Konflikten oder Interessenkollisionen.
+- Eine Aufstellung der nächsten nötigen Fristen (z.B. Klagefristen, Einspruchstermine).
+- RVG-Stunden zur Berechnung der Rechnungen an Mandanten.
+- Die beginnende Aufbewahrungsfrist für Dokumente gemäß § 50 BORA.
 
-- **Phase** - der aktuell durchlaufenen Phase.
-- **Konfliktstatus** - ob es Interessenkonflikte gibt oder nicht.
-- **Nächste Frist** - die nächste wichtige juristische Deadline für den Mandanten.
-- **RVG-Stunden** - die gesammelten RVG-Zeiten während der aktiven Phase.
-- **Aufbewahrungsfrist** - das Gesetzliche Mindestaufbewahrungsschutz nach Abschluss des Falles.
+## Compliance-Anforderungen
 
-## Compliance
+### K11-Konformität (verstärkt)
+Die Factory muss die K11-Konformität einhalten, was bedeutet, dass es eine Verbot gibt, Cross-Mandanten-Reads durchzuführen. Dies ist entscheidend für das Schutz der Privatsphäre und Rechtlichen Vorschriften.
 
-Die Factory erfüllt strenge Sicherheitsanforderungen:
+### Datensicherheit (LC1-LC5)
+Es muss LC1-LC5-Datensicherheitsrichtlinien eingehalten werden, um die Integrität der Mandanten-Daten sicherzustellen. Dies beinhaltet eine spezielle Datenlagerungslösung für jedes Mandantenkonto.
 
-- **K11-Konformität (verbunden für Cross-Mandanten-Read Verbot)**: Es wird verhindert, dass Daten von einer Mandantensitzung zur anderen kopiert oder gelesen werden.
-- **LC1-LC5-Datensicherheit**: Jeder Mandant hat eine eigene Datenbank mit speziellen Zugriffsberechtigungen.
-- **Trinity-Pattern (Conservative/Aggressive/Contrarian via Konfliktstatus)**: Der System treibt die Analyse von Konflikten durch verschiedene Perspektiven, um eine gründliche Beurteilung zu gewährleisten.
-- **Audit-Trail**: Jede Aktion wird protokolliert und überwacht.
-- **Privileged-Communication-Schutz**: Sensible Kommunikation wird gesichert.
-  
-## Aktivierung
+### Trinity-Pattern
+Die Factory muss das Trinity-Pattern implementieren, welches ein Muster bietet, um unterschiedliche Perspektiven (Konservativ, Aggressiv und Konträr) zu einem bestimmten Konfliktsstatus einzubinden. Dies unterstützt in der Entscheidungsfindung.
 
-1. Martin-Phronesis-Zustimmung (Welle 49)
-2. Cross-LLM-Audit (Codex+Gemini+Copilot): Der Code muss von drei unabhängigen LLMs geprüft werden, um seine Korrektheit und Sicherheit zu bestätigen.
-3. Bestandene Tests (`python3 -m pytest tests/ -v`)
-4. Real-Modus aktivieren mit spezifischen Umgebungsvariablen und Ticket: `DF_LEXVANCE_MANDANTEN_REAL_ENABLED=true`, `PHRONESIS_TICKET=PT-...`
+### Audit-Trail
+Ein vollständiger Audit-Trail ist notwendig, um jegliche privilegierte Kommunikation während des gesamten Lebenszyklus von Mandanten zu dokumentieren und schützen.
 
-## Roadmap
+## Aktivierung der Factory
 
-### Welle 49+ Aktivitäten
-1. **Konflikt-Check-Engine (Cross-Mandanten ohne Cross-Read-Verletzung)**: Die Factory wird erweitert, um eine effiziente Konfliktschutzmethode zu implementieren.
-2. **DMS-Integration (Akten-Versionierung)**: Eine vollständige Integration mit dem Dokumentenmanagement-System (DMS) wird durchgeführt, um eine zentrale Aktenverwaltung und Versionskontrolle sicherzustellen.
-3. **Fristentracker**: Die Factory erhält ein Feature zur Verfolgung aller wichtigen rechtlichen Fristen für den Mandanten.
-4. **RVG-Stundenabrechnungs-Engine**: Eine spezielle Engine wird implementiert, um RVG-Zeiten korrekt und effizient zu kalkulieren.
-5. **Mandanten-CRM-UI**: Ein benutzerfreundliches Interface zur Steuerung aller Factory-Funktionen für Mandatentreibende wird entwickelt.
+Die 'df-lexvance-mandanten-pipeline' kann nur aktiviert werden nachdem bestimmte Voraussetzungen erfüllt wurden:
+1. Zustimmung durch Martin-Phronesis (Welle 49).
+2. Bestehen eines Cross-LLM-Audits, bestehend aus drei Teilprüfungen durch Codex, Gemini und Copilot.
+3. Erfolgreiche Durchführung aller Tests (`python3 -m pytest tests/ -v`).
+4. Aktivierung im Realmodus mit spezifischen Umgebungsvariablen `DF_LEXVANCE_MANDANTEN_REAL_ENABLED=true` sowie einem speziellen PHRONESIS-Ticket `PHRONESIS_TICKET=PT-...`.
 
-### Welle 50+ Aktivitäten
-1. **Privileged Communication-Audit-Schutz**: Eine weitere Schicht an Sicherheit wird hinzugefügt, um privilegierte Kommunikation zu schützen.
-2. **Cross-LLM-3OF3-Audit-Verdict**: Nach Abschluss der Entwicklung werden die Cross-LLM-Tests durchgeführt und bestanden.
+## Roadmap für zukünftige Entwicklungen
 
-## Schlussfolgerung
+Für die Zukunft sind folgende Verbesserungsschritte geplant:
+- Entwicklung einer Engine zur Durchführung von Konfliktprüfung (Welle 49).
+- Implementierung der DMS-Integration, einschließlich Versionskontrolle von Dokumenten (Welle 49).
+- Erweiterung um einen Fristentracker für Klagen, Einspruch oder Revisionsmöglichkeiten (Welle 49).
+- Entwicklung einer Engine zur RVG-Stundenabrechnung (Welle 50).
+- Implementierung des Audit-Schutzes für privilegierte Kommunikation (Welle 50).
+- Erstellung eines Mandanten-CRM-UI, um eine effiziente Interaktion mit Mandantendaten zu ermöglichen (Welle 51+).
 
-Die Dark-Factory `df-lexvance-mandanten-pipeline` ist ein revolutionärer Ansatz zur effizienten Verwaltung von Mandanten im rechtlichen Umfeld. Durch die Integration der fünf Phasen des Mandatentreibens und den Erhalt von Sicherheitsstandards wie K11-Konformität und LC1-LC5-Datenschutz bietet sie eine vollständige Lösung für alle Aspekte des Mandantengeschäfts.
+Diese Factory ist ein bedeutender Schritt in Richtung einer vollautomatisierten und datengetriebenen Methode zur Verwaltung von Mandatengeschäften bei LexVance.
