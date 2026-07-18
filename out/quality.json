@@ -1,9 +1,9 @@
 {
   "df": "df-lexvance-mandanten-pipeline",
-  "ts": "2026-07-16T15:55:23.978403+00:00",
+  "ts": "2026-07-17T15:55:40.445309+00:00",
   "maturity": "TESTED",
   "maturity_level": 4,
   "evidence_grade": 4,
-  "wargame_verdict": "CONDITIONAL",
+  "wargame_verdict": null,
   "crux": "[CRUX-MK]"
 }
