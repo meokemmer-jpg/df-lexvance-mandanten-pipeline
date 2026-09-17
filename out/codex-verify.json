@@ -1,0 +1,5 @@
+{
+  "verdict": "HOLLOW",
+  "reason": "Der Test prueft ueberwiegend hartcodierte Mock-Konstanten und ENV-Schalter, aber keine echte Mandanten-Pipeline-Funktion wie Akten-/Fristen-/RVG-Verarbeitung mit adversarialem Input und fachlich anderem Output.",
+  "ts": "2026-09-16T23:54:53.442695+00:00"
+}
