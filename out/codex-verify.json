@@ -1,5 +1,6 @@
 {
-  "verdict": "HOLLOW",
-  "reason": "Der Test prueft ueberwiegend hartcodierte Mock-Konstanten und ENV-Schalter, aber keine echte Mandanten-Pipeline-Funktion wie Akten-/Fristen-/RVG-Verarbeitung mit adversarialem Input und fachlich anderem Output.",
-  "ts": "2026-09-16T23:54:53.442695+00:00"
+  "verdict": "HOLDS",
+  "reason": "Der zentrale Test fuehrt echte Clean-vs-Konflikt-Payloads durch die Pipeline und erzwingt unterschiedliche Funktionsoutputs fuer konflikt_status, Review-Entscheidung, Warnings, offene RVG-Stunden und Payload-Hash statt nur Konstanten zu spiegeln.",
+  "ts": "2026-09-17T03:13:14.066924+00:00",
+  "attempts": 1
 }
