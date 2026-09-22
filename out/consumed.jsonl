@@ -110,3 +110,4 @@
 {"ts": "2026-09-07T07:37:08.994413+00:00", "producer": "df-lexvance-mandanten-pipeline", "by": "df-artifact-collector", "purpose": "index", "crux": "[CRUX-MK]", "valid": true}
 {"ts": "2026-09-07T08:07:49.961625+00:00", "producer": "df-lexvance-mandanten-pipeline", "by": "df-artifact-collector", "purpose": "index", "crux": "[CRUX-MK]", "valid": true}
 {"ts": "2026-09-07T08:39:58.208042+00:00", "producer": "df-lexvance-mandanten-pipeline", "by": "df-artifact-collector", "purpose": "index", "crux": "[CRUX-MK]", "valid": true}
+{"ts": "2026-09-21T12:43:28.464675+00:00", "producer": "df-lexvance-mandanten-pipeline", "by": "df-domain-nlm-sync", "purpose": "nlm-board", "crux": "[CRUX-MK]", "valid": true}
